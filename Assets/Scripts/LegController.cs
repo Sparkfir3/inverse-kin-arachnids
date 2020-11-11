@@ -10,10 +10,31 @@ public class LegController : MonoBehaviour {
     public Transform baseTarget;
     public Transform endTarget;
 
+    private bool _active;
     private FastIKFabric ik;
+    private Rigidbody rb;
+    private List<BoxCollider> boxColliders = new List<BoxCollider>();
 
     private void Awake() {
         ik = GetComponentInChildren<FastIKFabric>();
+        rb = GetComponent<Rigidbody>();
+        foreach(BoxCollider collider in GetComponentsInChildren<BoxCollider>())
+            boxColliders.Add(collider);
+    }
+
+    public bool Active {
+        get {
+            return _active;
+        }
+        set {
+            _active = value;
+
+            ik.enabled = _active;
+            rb.isKinematic = _active;
+            rb.useGravity = !_active;
+            foreach(BoxCollider boxCollider in boxColliders)
+                boxCollider.enabled = !_active;
+        }
     }
 
     private void LateUpdate() {

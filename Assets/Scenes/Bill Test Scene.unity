@@ -199,7 +199,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 67021823}
   m_LocalRotation: {x: 0.40771607, y: -0, z: -0, w: 0.91310877}
-  m_LocalPosition: {x: 0, y: 4, z: -3}
+  m_LocalPosition: {x: 0, y: 6, z: -5.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -254,7 +254,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!136 &535150335
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -336,7 +336,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh20264
+  m_Name: pb_Mesh15980
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -1015,17 +1015,17 @@ PrefabInstance:
     - target: {fileID: 4783066543643277998, guid: 4094cb2240df74c4d9b52e1d0c1a58cc,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -2.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4783066543643277998, guid: 4094cb2240df74c4d9b52e1d0c1a58cc,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2
+      value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: 4783066543643277998, guid: 4094cb2240df74c4d9b52e1d0c1a58cc,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1
+      value: -0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4783066543643277998, guid: 4094cb2240df74c4d9b52e1d0c1a58cc,
         type: 3}
@@ -1070,7 +1070,7 @@ PrefabInstance:
     - target: {fileID: 8071011236851675710, guid: 4094cb2240df74c4d9b52e1d0c1a58cc,
         type: 3}
       propertyPath: m_Name
-      value: Body
+      value: Spider
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4094cb2240df74c4d9b52e1d0c1a58cc, type: 3}
