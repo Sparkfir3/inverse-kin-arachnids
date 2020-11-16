@@ -7,13 +7,14 @@ using DitzelGames.FastIK;
 public class LegController : MonoBehaviour {
 
     [Header("IK Control")]
-    public Transform baseTarget;
     public Transform endTarget;
 
     private bool _active;
     private FastIKFabric ik;
     private Rigidbody rb;
     private List<BoxCollider> boxColliders = new List<BoxCollider>();
+
+    // -------------------------------------------------------------------------------------------------------------
 
     private void Awake() {
         ik = GetComponentInChildren<FastIKFabric>();
@@ -22,6 +23,8 @@ public class LegController : MonoBehaviour {
             boxColliders.Add(collider);
     }
 
+    // -------------------------------------------------------------------------------------------------------------
+
     public bool Active {
         get {
             return _active;
@@ -29,18 +32,30 @@ public class LegController : MonoBehaviour {
         set {
             _active = value;
 
-            ik.enabled = _active;
             rb.isKinematic = _active;
             rb.useGravity = !_active;
             foreach(BoxCollider boxCollider in boxColliders)
                 boxCollider.enabled = !_active;
+
+            // Disable IK
+            if(!_active)
+                SetIk(false);
         }
     }
 
+    public void SetIk(bool value) {
+        ik.enabled = value;
+    }
+
+    public void SetTarget(Vector3 position) {
+        endTarget.position = position;
+    }
+
+    // -------------------------------------------------------------------------------------------------------------
+
     private void LateUpdate() {
-        if(baseTarget)
-            transform.position = baseTarget.position;
-        ik.Target = endTarget;
+        if(ik.enabled)
+            ik.Target = endTarget;
     }
 
     private void OnDrawGizmos() {

@@ -18,6 +18,9 @@ public class SpiderEditor : Editor {
             if(spider.Active)
                 spider.Active = false;
         }
+        if(GUILayout.Button("Attempt Reassemble")) {
+            spider.AttemptRebuild();
+        }
     }
 
 }
