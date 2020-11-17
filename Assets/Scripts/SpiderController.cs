@@ -12,8 +12,9 @@ public class SpiderController : MonoBehaviour {
     private NavMeshAgent agent;
 
     private List<Vector3> baseLegPositions = new List<Vector3>();
-    private List<Transform> legTargets = new List<Transform>();
-    private List<GameObject> legs = new List<GameObject>();
+    [SerializeField] List<Transform> legTargets = new List<Transform>();
+    //private List<Transform> legTargetCasters = new List<Transform>();
+    [SerializeField] List<GameObject> legs = new List<GameObject>();
 
     // -------------------------------------------------------------------------------------------------------------
 
@@ -24,14 +25,81 @@ public class SpiderController : MonoBehaviour {
         boxCollider = GetComponent<BoxCollider>();
         agent = GetComponent<NavMeshAgent>();
 
-        foreach(Transform child in transform)
-            legs.Add(child.gameObject);
+        //foreach(Transform child in transform)
+            //legs.Add(child.gameObject);
+
+        // Set list
+        //legTargets.Clear();
+        //foreach (GameObject leg in legs)
+            //legTargets.Add(leg.transform.Find("Desired End Target"));
+
+        // Set target casters
+        for (int i = 0; i < legs.Count; i++)
+        {
+            legs[i].GetComponent<LegController>().legNum = i;
+            Transform t = legs[i].GetComponent<LegController>().targetCaster;
+
+            switch(i)
+            {
+                case 0:
+                    //t.position.Set(t.position.x - 1, t.position.y, t.position.z);
+                    t.localPosition = new Vector3(t.localPosition.x - 1, t.localPosition.y, t.localPosition.z);
+                    //legTargetCasters.Add(t);
+                    break;
+                case 1:
+                    //t.position.Set(t.position.x + 1, t.position.y, t.position.z);
+                    t.localPosition = new Vector3(t.localPosition.x + 1, t.localPosition.y, t.localPosition.z);
+                    //legTargetCasters.Add(t);
+                    break;
+                case 2:
+                    //t.position.Set(t.position.x + 1, t.position.y, t.position.z);
+                    t.localPosition = new Vector3(t.localPosition.x + 1, t.localPosition.y, t.localPosition.z);
+                    //legTargetCasters.Add(t);
+                    break;
+                case 3:
+                    //t.position.Set(t.position.x - 1, t.position.y, t.position.z);
+                    t.localPosition = new Vector3(t.localPosition.x - 1, t.localPosition.y, t.localPosition.z);
+                    //legTargetCasters.Add(t);
+                    break;
+                case 4:
+                    break;
+                case 5:
+                    break;
+                case 6:
+                    break;
+                case 7:
+                    break;
+                default:
+                    break;
+            }
+
+            //legs[i].
+        }
     }
 
     private void Start() {
         Active = legs.Count >= 2;
 
         //InvokeRepeating("AttemptRebuild", 2f, 2f); // Repeat every 2 seconds
+    }
+
+    #endregion
+
+    #region Repeating
+
+    private void Update()
+    {
+        foreach (Transform legTarget in legTargets)
+        {
+
+        }
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.black;
+        foreach (Transform legTarget in legTargets)
+            Gizmos.DrawSphere(legTarget.position, 0.15f);
     }
 
     #endregion
@@ -128,8 +196,9 @@ public class SpiderController : MonoBehaviour {
         // Set list
         legs = newLegs;
         legTargets.Clear();
-        foreach(GameObject leg in legs)
-            legTargets.Add(leg.transform);
+        foreach (GameObject leg in legs)
+            legTargets.Add(leg.transform.Find("Desired End Target"));
+            //legTargets.Add(leg.transform);
 
         // Re-enable
         yield return new WaitForSeconds(0.1f);
