@@ -11,6 +11,9 @@ public class LegController : MonoBehaviour {
     public Transform targetCaster;          //Floating transform where the raycast will originate from
     public float distThreshold = 1.0f;      //Max distance between raycast hit and current foot position before spider takes a step
     public float stepTime = 0.5f;           //Time required for the leg to take a step forward/backward
+    public float stepHeight = 0.5f;         //Total height of a step on flat ground
+    public bool isGrounded = true;          //Whether the foot is currently on the ground
+    public int legNum = -1;                 //Number 0-7 representing which leg this is on the body (-1 error)
 
     private bool _active;
     private FastIKFabric ik;
@@ -27,7 +30,7 @@ public class LegController : MonoBehaviour {
         rb = GetComponent<Rigidbody>();
         foreach(BoxCollider collider in GetComponentsInChildren<BoxCollider>())
             boxColliders.Add(collider);
-        footStopPos = new Vector3(-2, 0, 0);
+        footStopPos = new Vector3(transform.TransformPoint(targetCaster.transform.position).x, 0, 0);
     }
 
     // -------------------------------------------------------------------------------------------------------------
@@ -61,17 +64,20 @@ public class LegController : MonoBehaviour {
     private void Update()
     {
         SetTarget(footStopPos);
+        //targetCaster.transform.position = targetCaster.transform.TransformPoint(targetCaster.transform.InverseTransformPoint(0, 0, targetCaster.transform.position.z));
 
         // Does the ray intersect any objects excluding the player layer
-        if (Physics.Raycast(targetCaster.transform.position, transform.TransformDirection(Vector3.down), out hit, Mathf.Infinity, LayerMask.GetMask("Default")))
+        if (Physics.Raycast(targetCaster.transform.position, transform.TransformDirection(Vector3.down), out hit, Mathf.Infinity, LayerMask.GetMask("Terrain")))
         {
             float travelDistance = Vector3.Distance(hit.point, endTarget.transform.position);
             Debug.DrawRay(targetCaster.transform.position, transform.TransformDirection(Vector3.down) * hit.distance, Color.magenta);
             Debug.DrawRay(hit.point, transform.TransformDirection(Vector3.left) * travelDistance, Color.cyan);
-            Debug.Log("Did Hit");
+            //Debug.Log("Did Hit");
             drawRayGizmo = true;
 
-            if(travelDistance > distThreshold)
+            isGrounded = (travelDistance <= distThreshold);
+
+            if(!isGrounded)
             {
                 StartCoroutine(StepLerp(stepTime));
             }
@@ -79,7 +85,7 @@ public class LegController : MonoBehaviour {
         else
         {
             Debug.DrawRay(targetCaster.transform.position, transform.TransformDirection(Vector3.down) * 1000, Color.red);
-            Debug.Log("Did not Hit");
+            //Debug.Log("Did not Hit");
             drawRayGizmo = false;
         }
     }
@@ -113,8 +119,11 @@ public class LegController : MonoBehaviour {
 
         for (float l = 0; l < 1; l += (stepTime * Time.deltaTime))
         {
-            footStopPos = Vector3.Lerp(oldFootPos, newFootPos, l);
+            //footStopPos = Vector3.Lerp(oldFootPos, newFootPos, l);
+            footStopPos = Vector3.Lerp(oldFootPos, new Vector3(newFootPos.x, newFootPos.y + (Mathf.Sin(l * Mathf.PI) * stepHeight), newFootPos.z), l);
             yield return null;
         }
+
+        footStopPos = newFootPos;
     }
 }

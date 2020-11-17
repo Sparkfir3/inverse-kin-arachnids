@@ -432,8 +432,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   endTarget: {fileID: 1212548456079916262}
   targetCaster: {fileID: 1872126661}
-  distThreshold: 1
+  distThreshold: 1.5
   stepTime: 5
+  stepHeight: 1
 --- !u!54 &3258695878449593144
 Rigidbody:
   m_ObjectHideFlags: 0
