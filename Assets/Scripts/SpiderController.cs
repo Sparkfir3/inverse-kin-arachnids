@@ -8,16 +8,26 @@ public class SpiderController : MonoBehaviour {
     public float casterOffset = 1.0f;
     public float bodyHeight = 1.0f;
 
+#pragma warning disable 0649 // Disable "Field is never assigned" warning for SerializeField
+
     private bool _active;
 
     private Rigidbody rb;
     private BoxCollider boxCollider;
     private NavMeshAgent agent;
 
+    [Header("IK Control")]
     private List<Vector3> baseLegPositions = new List<Vector3>();
     [SerializeField] List<Transform> legTargets = new List<Transform>();
     //private List<Transform> legTargetCasters = new List<Transform>();
     [SerializeField] List<GameObject> legs = new List<GameObject>();
+
+    [Header("AI")]
+    [SerializeField] private float moveSpeed;
+    private Coroutine move;
+
+    [Header("Re-assembly")]
+    [SerializeField] private float rebuildHeightOffset;
 
     // -------------------------------------------------------------------------------------------------------------
 
@@ -29,8 +39,12 @@ public class SpiderController : MonoBehaviour {
         agent = GetComponent<NavMeshAgent>();
         transform.localPosition = new Vector3(transform.localPosition.x, bodyHeight, transform.localPosition.z);
 
-        //foreach(Transform child in transform)
-            //legs.Add(child.gameObject);
+        agent.speed = moveSpeed;
+
+        // Set legs, if not already set
+        if(legs.Count == 0)
+            foreach(Transform child in transform)
+                legs.Add(child.gameObject);
 
         // Set list
         //legTargets.Clear();
@@ -203,7 +217,7 @@ public class SpiderController : MonoBehaviour {
             rb.isKinematic = _active;
             rb.useGravity = !_active;
             boxCollider.enabled = !_active;
-            agent.enabled = false; //_active;
+            agent.enabled = _active;
 
             // Disable legs
             if(!_active) {
@@ -213,8 +227,52 @@ public class SpiderController : MonoBehaviour {
                 }
                 legs.Clear();
             }
+
+            // Movement
+            if(_active)
+                move = StartCoroutine(Navigate());
+            else if(move != null)
+                StopCoroutine(move);
         }
     }
+
+    // -------------------------------------------------------------------------------------------------------------
+
+    #region Behavior
+
+    private IEnumerator Navigate() {
+        Vector3 target;
+        /*Vector3 lookAt;
+        Quaternion lookRotation;*/
+
+        while(agent) {
+            // Stop in place
+            agent.destination = transform.position;
+            yield return new WaitForSeconds(0.5f);
+
+            // Set destination
+            target = transform.position + new Vector3(Random.Range(-5f, 5f), 0f, Random.Range(-5f, 5f));
+            /*lookAt = target - transform.position;
+            lookAt.y = 0;
+            lookRotation = Quaternion.LookRotation(target, Vector3.up);
+            lookRotation = Quaternion.Euler(0f, lookRotation.eulerAngles.y, 0f);*/
+
+            // Turn towards target
+            /*for(float i = 0; i < 1f; i += Time.deltaTime) {
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, lookRotation, 360f * Time.deltaTime);
+                Debug.Log("rotating");
+                yield return null;
+            }*/
+
+            yield return new WaitForSeconds(0.5f);
+
+            // Move
+            agent.destination = target;
+            yield return new WaitForSeconds(3f);
+        }
+    }
+
+    #endregion
 
     // -------------------------------------------------------------------------------------------------------------
 
@@ -284,7 +342,7 @@ public class SpiderController : MonoBehaviour {
         // Get desired transform
         desiredRotation = Quaternion.Euler(0f, transform.rotation.eulerAngles.y, 0f);
         if(Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 5f, LayerMask.GetMask("Terrain")))
-            desiredPosition = hit.point + new Vector3(0, 1.5f, 0);
+            desiredPosition = hit.point + new Vector3(0, rebuildHeightOffset, 0);
 
         // Lerp over time
         for(float i = 0; i < 1; i += Time.deltaTime) {
@@ -334,14 +392,14 @@ public class SpiderController : MonoBehaviour {
         baseLegPositions.Clear();
         switch(count) {
             case 2:
-                baseLegPositions.Add(new Vector3(0f, -0.255f, 0.2f));
-                baseLegPositions.Add(new Vector3(0f, -0.255f, 0.2f));
+                baseLegPositions.Add(new Vector3(0f, 0.745f, 0.2f));
+                baseLegPositions.Add(new Vector3(0f, 0.745f, 0.2f));
                 break;
             case 4:
-                baseLegPositions.Add(new Vector3(0f, -0.255f, 0.2f));
-                baseLegPositions.Add(new Vector3(0f, -0.255f, 0.2f));
-                baseLegPositions.Add(new Vector3(0f, -0.255f, 0.09f));
-                baseLegPositions.Add(new Vector3(0f, -0.255f, 0.09f));
+                baseLegPositions.Add(new Vector3(0f, 0.745f, 0.2f));
+                baseLegPositions.Add(new Vector3(0f, 0.745f, 0.2f));
+                baseLegPositions.Add(new Vector3(0f, 0.745f, 0.09f));
+                baseLegPositions.Add(new Vector3(0f, 0.745f, 0.09f));
                 break;
             default:
                 break;
