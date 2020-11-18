@@ -67,7 +67,7 @@ public class LegController : MonoBehaviour {
         //targetCaster.transform.position = targetCaster.transform.TransformPoint(targetCaster.transform.InverseTransformPoint(0, 0, targetCaster.transform.position.z));
 
         // Does the ray intersect any objects excluding the player layer
-        if (Physics.Raycast(targetCaster.transform.position, transform.TransformDirection(Vector3.down), out hit, Mathf.Infinity, LayerMask.GetMask("Terrain")))
+        if (Physics.Raycast(targetCaster.transform.position, Vector3.down, out hit, Mathf.Infinity, LayerMask.GetMask("Terrain")))
         {
             float travelDistance = Vector3.Distance(hit.point, endTarget.transform.position);
             Debug.DrawRay(targetCaster.transform.position, transform.TransformDirection(Vector3.down) * hit.distance, Color.magenta);
