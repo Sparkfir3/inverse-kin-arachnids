@@ -149,11 +149,12 @@ public class SpiderController : MonoBehaviour {
         foreach(RaycastHit hit in hits) {
             //Debug.Log(hit.collider.gameObject.name);
             LegController hitLeg = hit.collider.GetComponentInParent<LegController>();
-            if(hitLeg && !legs.Contains(hitLeg.gameObject)) {
+            if(hitLeg && !legs.Contains(hitLeg.gameObject) && legs.Count < 4) {
                 legs.Add(hitLeg.gameObject);
             }
         }
 
+        Debug.Log(gameObject.name + ", " + legs.Count);
         return legs;
     }
 
@@ -162,8 +163,57 @@ public class SpiderController : MonoBehaviour {
         if(newLegs.Count % 2 == 1)
             newLegs.RemoveAt(newLegs.Count - 1);
 
-        #region Reposition Legs
-        // Set legs active
+        // Freeze rigidbody
+        rb.constraints = RigidbodyConstraints.FreezeAll;
+        yield return new WaitForSeconds(1f);
+
+        // Move body and legs
+        yield return ResetBody();
+        yield return new WaitForSeconds(0.5f);
+        yield return SetNewLegs(newLegs);
+
+        // Set list
+        legs = newLegs;
+        legTargets.Clear();
+        foreach (GameObject leg in legs)
+            legTargets.Add(leg.transform.Find("Desired End Target"));
+        //legTargets.Add(leg.transform);
+
+        // Unfreeze rigidbody
+        rb.constraints = RigidbodyConstraints.None;
+
+        // Re-enable
+        yield return null;
+        for(int j = 0; j < newLegs.Count; j++) { // Set parent and enable ik
+            newLegs[j].GetComponent<LegController>().SetIk(true);
+            newLegs[j].transform.parent = transform;
+        }
+        Active = true;
+    }
+
+    private IEnumerator ResetBody() {
+        Quaternion desiredRotation, oldRotation = transform.rotation;
+        Vector3 desiredPosition = transform.position, oldPosition = transform.position;
+
+        // Get desired transform
+        desiredRotation = Quaternion.Euler(0f, transform.rotation.eulerAngles.y, 0f);
+        if(Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 5f, LayerMask.GetMask("Terrain")))
+            desiredPosition = hit.point + new Vector3(0, 1.5f, 0);
+
+        // Lerp over time
+        for(float i = 0; i < 1; i += Time.deltaTime) {
+            transform.rotation = Quaternion.Slerp(oldRotation, desiredRotation, i / 1f);
+            transform.position = Vector3.Lerp(oldPosition, desiredPosition, i / 1f);
+            yield return null;
+        }
+
+        // Force end
+        transform.rotation = desiredRotation;
+        transform.position = desiredPosition;
+        yield return null;
+    }
+
+    private IEnumerator SetNewLegs(List<GameObject> newLegs) {// Set legs active
         SetLegBasePositions(newLegs.Count);
         for(int j = 0; j < newLegs.Count; j++) {
             newLegs[j].GetComponent<LegController>().Active = true;
@@ -191,36 +241,21 @@ public class SpiderController : MonoBehaviour {
             newLegs[j].transform.rotation = endRotations[j];
             newLegs[j].transform.position = endPositions[j];
         }
-        #endregion
-
-        // Set list
-        legs = newLegs;
-        legTargets.Clear();
-        foreach (GameObject leg in legs)
-            legTargets.Add(leg.transform.Find("Desired End Target"));
-            //legTargets.Add(leg.transform);
-
-        // Re-enable
-        yield return new WaitForSeconds(0.1f);
-        for(int j = 0; j < newLegs.Count; j++) { // Set parent and enable ik
-            newLegs[j].GetComponent<LegController>().SetIk(true);
-            newLegs[j].transform.parent = transform;
-        }
-        Active = true;
+        yield return null;
     }
 
     private void SetLegBasePositions(int count) {
         baseLegPositions.Clear();
         switch(count) {
             case 2:
-                baseLegPositions.Add(new Vector3(0.5f, 0f, 0f));
-                baseLegPositions.Add(new Vector3(-0.5f, 0f, 0f));
+                baseLegPositions.Add(new Vector3(0f, -0.255f, 0.2f));
+                baseLegPositions.Add(new Vector3(0f, -0.255f, 0.2f));
                 break;
             case 4:
-                baseLegPositions.Add(new Vector3(0.5f, 0f, 0.2f));
-                baseLegPositions.Add(new Vector3(-0.5f, 0f, 0.2f));
-                baseLegPositions.Add(new Vector3(0.5f, 0f, -0.2f));
-                baseLegPositions.Add(new Vector3(-0.5f, 0f, -0.2f));
+                baseLegPositions.Add(new Vector3(0f, -0.255f, 0.2f));
+                baseLegPositions.Add(new Vector3(0f, -0.255f, 0.2f));
+                baseLegPositions.Add(new Vector3(0f, -0.255f, 0.09f));
+                baseLegPositions.Add(new Vector3(0f, -0.255f, 0.09f));
                 break;
             default:
                 break;
