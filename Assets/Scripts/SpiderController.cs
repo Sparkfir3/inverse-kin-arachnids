@@ -5,6 +5,9 @@ using UnityEngine.AI;
 
 public class SpiderController : MonoBehaviour {
 
+    public float casterOffset = 1.0f;
+    public float bodyHeight = 1.0f;
+
     private bool _active;
 
     private Rigidbody rb;
@@ -24,6 +27,7 @@ public class SpiderController : MonoBehaviour {
         rb = GetComponent<Rigidbody>();
         boxCollider = GetComponent<BoxCollider>();
         agent = GetComponent<NavMeshAgent>();
+        transform.localPosition = new Vector3(transform.localPosition.x, bodyHeight, transform.localPosition.z);
 
         //foreach(Transform child in transform)
             //legs.Add(child.gameObject);
@@ -43,22 +47,26 @@ public class SpiderController : MonoBehaviour {
             {
                 case 0:
                     //t.position.Set(t.position.x - 1, t.position.y, t.position.z);
-                    t.localPosition = new Vector3(t.localPosition.x - 1, t.localPosition.y, t.localPosition.z);
+                    legs[0].GetComponent<LegController>().footStopPos = new Vector3(transform.TransformPoint(t.transform.position.x - (legs[0].GetComponent<LegController>().distThreshold / 2), 0, 0).x, 0, 0);
+                    t.localPosition = new Vector3(t.localPosition.x - casterOffset , t.localPosition.y, t.localPosition.z);
                     //legTargetCasters.Add(t);
                     break;
                 case 1:
                     //t.position.Set(t.position.x + 1, t.position.y, t.position.z);
-                    t.localPosition = new Vector3(t.localPosition.x + 1, t.localPosition.y, t.localPosition.z);
+                    legs[3].GetComponent<LegController>().footStopPos = new Vector3(transform.TransformPoint(t.transform.position).x, 0, 0);
+                    t.localPosition = new Vector3(t.localPosition.x + casterOffset, t.localPosition.y, t.localPosition.z);
                     //legTargetCasters.Add(t);
                     break;
                 case 2:
                     //t.position.Set(t.position.x + 1, t.position.y, t.position.z);
-                    t.localPosition = new Vector3(t.localPosition.x + 1, t.localPosition.y, t.localPosition.z);
+                    legs[3].GetComponent<LegController>().footStopPos = new Vector3(transform.TransformPoint(t.transform.position).x, 0, 0);
+                    t.localPosition = new Vector3(t.localPosition.x + casterOffset, t.localPosition.y, t.localPosition.z);
                     //legTargetCasters.Add(t);
                     break;
                 case 3:
                     //t.position.Set(t.position.x - 1, t.position.y, t.position.z);
-                    t.localPosition = new Vector3(t.localPosition.x - 1, t.localPosition.y, t.localPosition.z);
+                    legs[3].GetComponent<LegController>().footStopPos = new Vector3(transform.TransformPoint(t.transform.position.x - (legs[3].GetComponent<LegController>().distThreshold / 2), 0, 0).x, 0, 0);
+                    t.localPosition = new Vector3(t.localPosition.x - casterOffset - (legs[i].GetComponent<LegController>().distThreshold / 2), t.localPosition.y, t.localPosition.z);
                     //legTargetCasters.Add(t);
                     break;
                 case 4:
@@ -75,10 +83,32 @@ public class SpiderController : MonoBehaviour {
 
             //legs[i].
         }
+
+        legs[1].GetComponent<LegController>().canStep = true;
+        legs[2].GetComponent<LegController>().canStep = true;
     }
 
     private void Start() {
         Active = legs.Count >= 2;
+
+        /*// Set target casters
+        for (int i = 0; i < legs.Count; i++)
+        {
+            legs[i].GetComponent<LegController>().legNum = i;
+            Transform t = legs[i].GetComponent<LegController>().targetCaster;
+
+            switch (i)
+            {
+                case 0:
+                    t.localPosition = new Vector3(t.localPosition.x + (legs[i].GetComponent<LegController>().distThreshold / 2), t.localPosition.y, t.localPosition.z);
+                    break;
+                case 3:
+                    t.localPosition = new Vector3(t.localPosition.x + (legs[i].GetComponent<LegController>().distThreshold / 2), t.localPosition.y, t.localPosition.z);
+                    break;
+                default:
+                    break;
+            }
+        }*/
 
         //InvokeRepeating("AttemptRebuild", 2f, 2f); // Repeat every 2 seconds
     }
@@ -89,9 +119,65 @@ public class SpiderController : MonoBehaviour {
 
     private void Update()
     {
-        foreach (Transform legTarget in legTargets)
+       /* float avgLegTargetHeight = 0;
+        
+        if(legTargets.Count > 0 && legTargets.Count == legs.Count)
         {
+            //int numLegsCounted = 0;
+            for (int i = 0; i < legTargets.Count; i++)
+            {
+                if (legs[i].GetComponent<LegController>().isGrounded)
+                {
+                    avgLegTargetHeight += legTargets[i].position.y;
+                    //numLegsCounted++;
+                }
+                else
+                {
+                    avgLegTargetHeight += legs[i].GetComponent<LegController>().footStopPos.y;
+                }
+            }
+            avgLegTargetHeight /= legTargets.Count;
+            //avgLegTargetHeight /= numLegsCounted;
+        }*/
 
+        //float bodyOffset = transform.position.y + bodyHeight - avgLegTargetHeight;
+
+        //transform.position = new Vector3(transform.position.x, bodyHeight + avgLegTargetHeight, transform.position.z);
+        //Debug.Log("avg leg: " + avgLegTargetHeight + "   +offset: " + (bodyHeight + avgLegTargetHeight));
+        //Debug.Log("actual bod pos: " + transform.position.y);
+        //transform.localPosition = new Vector3(transform.localPosition.x, bodyHeight + localLegAvg.y, transform.localPosition.z);
+
+        for (int i = 0; i < legs.Count; i++)
+        {
+            if(i == 0 || i == 3)
+            {
+                if (legs[1].GetComponent<LegController>().isGrounded && legs[2].GetComponent<LegController>().isGrounded &&
+                    (legs[1].GetComponent<LegController>().travelDistance >= legs[1].GetComponent<LegController>().distThreshold / 4) && (legs[1].GetComponent<LegController>().travelDistance <= 3 * legs[1].GetComponent<LegController>().distThreshold / 4))
+                {
+                    legs[0].GetComponent<LegController>().canStep = true;
+                    legs[3].GetComponent<LegController>().canStep = true;
+                }
+                else
+                {
+                    legs[0].GetComponent<LegController>().canStep = false;
+                    legs[3].GetComponent<LegController>().canStep = false;
+                }
+            }
+
+            if (i == 1 || i == 2)
+            {
+                if (legs[0].GetComponent<LegController>().isGrounded && legs[3].GetComponent<LegController>().isGrounded &&
+                    (legs[0].GetComponent<LegController>().travelDistance >= legs[0].GetComponent<LegController>().distThreshold / 4) && (legs[0].GetComponent<LegController>().travelDistance <= 3 * legs[0].GetComponent<LegController>().distThreshold / 4))
+                {
+                    legs[1].GetComponent<LegController>().canStep = true;
+                    legs[2].GetComponent<LegController>().canStep = true;
+                }
+                else
+                {
+                    legs[1].GetComponent<LegController>().canStep = false;
+                    legs[2].GetComponent<LegController>().canStep = false;
+                }
+            }
         }
     }
 
