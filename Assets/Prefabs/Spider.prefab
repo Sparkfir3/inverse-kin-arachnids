@@ -262,7 +262,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   casterOffset: 1.5
-  bodyHeight: 1
+  bodyHeight: 0
   legTargets:
   - {fileID: 1845686240482967676}
   - {fileID: 4902107885774216803}
