@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1710404374}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -41,7 +41,7 @@ GameObject:
   - component: {fileID: 7985652795218062433}
   - component: {fileID: 3029046858654914716}
   - component: {fileID: 6915170188872445044}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -124,7 +124,7 @@ GameObject:
   - component: {fileID: 6249865498025417406}
   - component: {fileID: 9077274455943516323}
   - component: {fileID: 7591646684351038784}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Spider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -225,8 +225,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 1, z: 0}
+  m_Size: {x: 1.1998059, y: 1.0000005, z: 0.8678207}
+  m_Center: {x: 0.015369713, y: 0.40768492, z: -0.0076848506}
 --- !u!195 &9077274455943516323
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -262,7 +262,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   casterOffset: 1.5
-  bodyHeight: -0.6
   legTargets:
   - {fileID: 1845686240482967676}
   - {fileID: 4902107885774216803}
