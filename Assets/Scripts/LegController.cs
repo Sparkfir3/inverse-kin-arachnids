@@ -51,7 +51,7 @@ public class LegController : MonoBehaviour {
             rb.isKinematic = _active;
             rb.useGravity = !_active;
             foreach(BoxCollider boxCollider in boxColliders)
-                boxCollider.enabled = !_active;
+                boxCollider.enabled = true; //!_active;
 
             // Disable IK
             if(!_active)

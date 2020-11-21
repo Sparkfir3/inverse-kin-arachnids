@@ -243,7 +243,7 @@ public class SpiderController : MonoBehaviour {
             // Set own components
             rb.isKinematic = _active;
             rb.useGravity = !_active;
-            boxCollider.enabled = !_active;
+            //boxCollider.enabled = !_active;
             agent.enabled = _active;
 
             // Disable legs
@@ -325,7 +325,7 @@ public class SpiderController : MonoBehaviour {
             }
         }
 
-        Debug.Log(gameObject.name + ", " + legs.Count);
+        Debug.Log(gameObject.name + " attempting to rebuild, found " + legs.Count + " legs");
         return legs;
     }
 
