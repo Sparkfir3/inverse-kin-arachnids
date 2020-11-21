@@ -77,7 +77,8 @@ public class LegController : MonoBehaviour {
         {
             travelDistance = Vector3.Distance(hit.point, endTarget.transform.position);
             Debug.DrawRay(targetCaster.transform.position, transform.TransformDirection(Vector3.down) * hit.distance, Color.magenta);
-            Debug.DrawRay(hit.point, transform.TransformDirection(Vector3.left) * travelDistance, Color.cyan);
+            Color32 newColor = new Color32((byte)Mathf.Lerp(0, 255, travelDistance / distThreshold), 0, (byte)Mathf.Lerp(255, 0, travelDistance / distThreshold), 255);
+            Debug.DrawRay(hit.point, transform.TransformDirection(Vector3.left) * travelDistance, newColor);
             //Debug.Log("Did Hit");
             drawRayGizmo = true;
 
@@ -108,7 +109,8 @@ public class LegController : MonoBehaviour {
         Gizmos.DrawSphere(endTarget.position, 0.05f);
 
         //Target Caster Gizmo (BLUE)
-        Gizmos.color = Color.blue;
+        //Gizmos.color = Color.blue;
+        Gizmos.color = new Color32((byte)Mathf.Lerp(0, 255, travelDistance / distThreshold), 0, (byte)Mathf.Lerp(255, 0, travelDistance / distThreshold), 255);
         Gizmos.DrawSphere(targetCaster.position, 0.1f);
 
         if(drawRayGizmo)

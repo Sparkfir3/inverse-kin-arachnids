@@ -448,14 +448,14 @@ public class SpiderController : MonoBehaviour {
         baseLegPositions.Clear();
         switch(count) {
             case 2:
-                baseLegPositions.Add(new Vector3(0f, 0.745f, 0.2f));
-                baseLegPositions.Add(new Vector3(0f, 0.745f, 0.2f));
+                baseLegPositions.Add(new Vector3(0f, 0.123f, 0.2f));
+                baseLegPositions.Add(new Vector3(0f, 0.123f, 0.2f));
                 break;
             case 4:
-                baseLegPositions.Add(new Vector3(0f, 0.745f, 0.2f));
-                baseLegPositions.Add(new Vector3(0f, 0.745f, 0.2f));
-                baseLegPositions.Add(new Vector3(0f, 0.745f, 0.09f));
-                baseLegPositions.Add(new Vector3(0f, 0.745f, 0.09f));
+                baseLegPositions.Add(new Vector3(0f, 0.123f, 0.2f));
+                baseLegPositions.Add(new Vector3(0f, 0.123f, 0.2f));
+                baseLegPositions.Add(new Vector3(0f, 0.123f, 0.09f));
+                baseLegPositions.Add(new Vector3(0f, 0.123f, 0.09f));
                 break;
             default:
                 break;
