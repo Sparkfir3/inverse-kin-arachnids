@@ -156,9 +156,11 @@ public class SpiderController : MonoBehaviour {
 
     private void Update()
     {
-       for (int i = 0; i < legs.Count; i++)
+        bool stepAnyway = true;
+
+        for (int i = 0; i < legs.Count; i++)
         {
-            if(legs.Count == 2)
+            if (legs.Count == 2)
             {
                 if (i == 0)
                 {
@@ -185,12 +187,21 @@ public class SpiderController : MonoBehaviour {
                         legs[1].GetComponent<LegController>().canStep = false;
                     }
                 }
+
+                //If all legs are grounded and cannot step, prepare to force them to step anyway
+                if (stepAnyway && legs[i].GetComponent<LegController>().canStep == false &&
+                    legs[0].GetComponent<LegController>().isGrounded && legs[1].GetComponent<LegController>().isGrounded) { }
+                else
+                {
+                    stepAnyway = false;
+                }
             }
 
-            if(legs.Count == 4)
+            if (legs.Count == 4)
             {
                 if (i == 0 || i == 3)
                 {
+                    //If legs 1&2 are grounded and leg 1's travel distance is between 1/4 and 3/4
                     if (legs[1].GetComponent<LegController>().isGrounded && legs[2].GetComponent<LegController>().isGrounded &&
                         (legs[1].GetComponent<LegController>().travelDistance >= legs[1].GetComponent<LegController>().distThreshold / 4) && (legs[1].GetComponent<LegController>().travelDistance <= 3 * legs[1].GetComponent<LegController>().distThreshold / 4))
                     {
@@ -218,6 +229,42 @@ public class SpiderController : MonoBehaviour {
                         legs[2].GetComponent<LegController>().canStep = false;
                     }
                 }
+
+                //If all legs are grounded and cannot step, prepare to force them to step anyway
+                if (stepAnyway && legs[i].GetComponent<LegController>().canStep == false &&
+                    legs[0].GetComponent<LegController>().isGrounded && legs[1].GetComponent<LegController>().isGrounded && legs[2].GetComponent<LegController>().isGrounded && legs[3].GetComponent<LegController>().isGrounded)
+                { }
+                else
+                {
+                    stepAnyway = false;
+                }
+            }
+        }
+
+        if (legs.Count == 2 && stepAnyway)
+        {
+            //Check which of the front legs is lagging behind the most, then make that leg step forward
+            if (transform.InverseTransformPoint(legs[0].GetComponent<LegController>().footStopPos).z <= transform.InverseTransformPoint(legs[1].GetComponent<LegController>().footStopPos).z)
+            {
+                legs[0].GetComponent<LegController>().canStep = true;
+            }
+            else
+            {
+                legs[1].GetComponent<LegController>().canStep = true;
+            }
+        }
+        else if (legs.Count == 4 && stepAnyway)
+        { 
+            //Check which of the front legs is lagging behind the most, then make those legs step forward
+            if(transform.InverseTransformPoint(legs[0].GetComponent<LegController>().footStopPos).z <= transform.InverseTransformPoint(legs[1].GetComponent<LegController>().footStopPos).z)
+            {
+                legs[0].GetComponent<LegController>().canStep = true;
+                legs[3].GetComponent<LegController>().canStep = true;
+            }
+            else
+            {
+                legs[1].GetComponent<LegController>().canStep = true;
+                legs[2].GetComponent<LegController>().canStep = true;
             }
         }
     }

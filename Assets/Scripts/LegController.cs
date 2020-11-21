@@ -34,9 +34,6 @@ public class LegController : MonoBehaviour {
         rb = GetComponent<Rigidbody>();
         foreach(BoxCollider collider in GetComponentsInChildren<BoxCollider>())
             boxColliders.Add(collider);
-
-        //newFootPos = new Vector3(0,0,0);
-        //footStopPos = new Vector3(transform.TransformPoint(targetCaster.transform.position).x, 0, 0);
     }
 
     // -------------------------------------------------------------------------------------------------------------
@@ -70,7 +67,6 @@ public class LegController : MonoBehaviour {
     private void Update()
     {
         SetTarget(footStopPos);
-        //targetCaster.transform.position = targetCaster.transform.TransformPoint(targetCaster.transform.InverseTransformPoint(0, 0, targetCaster.transform.position.z));
 
         // Does the ray intersect any objects excluding the player layer
         if (Physics.Raycast(targetCaster.transform.position, Vector3.down, out hit, Mathf.Infinity, LayerMask.GetMask("Terrain")))
@@ -79,7 +75,6 @@ public class LegController : MonoBehaviour {
             Debug.DrawRay(targetCaster.transform.position, transform.TransformDirection(Vector3.down) * hit.distance, Color.magenta);
             Color32 newColor = new Color32((byte)Mathf.Lerp(0, 255, travelDistance / distThreshold), 0, (byte)Mathf.Lerp(255, 0, travelDistance / distThreshold), 255);
             Debug.DrawRay(hit.point, transform.TransformDirection(Vector3.left) * travelDistance, newColor);
-            //Debug.Log("Did Hit");
             drawRayGizmo = true;
 
             withinThreshold = (travelDistance <= distThreshold);
@@ -93,7 +88,6 @@ public class LegController : MonoBehaviour {
         else
         {
             Debug.DrawRay(targetCaster.transform.position, transform.TransformDirection(Vector3.down) * 1000, Color.red);
-            //Debug.Log("Did not Hit");
             drawRayGizmo = false;
         }
     }
