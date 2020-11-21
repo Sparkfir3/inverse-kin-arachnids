@@ -14,7 +14,11 @@ public class SpiderEditor : Editor {
             if(!spider.Active)
                 spider.Active = true;
         }*/
-        if(GUILayout.Button("Disable Spider")) {
+        if (GUILayout.Button("Reset Spider"))
+        {
+            spider.reset();
+        }
+        if (GUILayout.Button("Disable Spider")) {
             if(spider.Active)
                 spider.Active = false;
         }
