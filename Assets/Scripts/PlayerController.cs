@@ -18,25 +18,27 @@ public class PlayerController : MonoBehaviour {
 
 
     private void Update() {
-        if(cooldownTimer > 0)
-            cooldownTimer -= Time.deltaTime;
-        else
-            cooldownTimer = 0;
+        if(!GameManager.manager.Paused) {
+            if(cooldownTimer > 0)
+                cooldownTimer -= Time.deltaTime;
+            else
+                cooldownTimer = 0;
 
-        // Fireball
-        if(Input.GetButtonDown("Fire1") && cooldownTimer == 0) {
-            ShootFireball();
-            cooldownTimer = cooldown;
-        }
+            // Fireball
+            if(Input.GetButtonDown("Fire1") && cooldownTimer == 0) {
+                ShootFireball();
+                cooldownTimer = cooldown;
+            }
 
-        // Body
-        if(Input.GetButtonDown("Fire2")) {
-            SpawnBody();
-        }
+            // Body
+            /*if(Input.GetButtonDown("Fire2")) {
+                SpawnBody();
+            }*/
 
-        // Leg
-        if(Input.GetButtonDown("Fire3")) {
-            SpawnLeg();
+            // Leg
+            if(Input.GetButtonDown("Fire3")) {
+                SpawnLeg();
+            }
         }
     }
 
@@ -50,7 +52,7 @@ public class PlayerController : MonoBehaviour {
     }
 
     private void SpawnLeg() {
-        GameObject leg = Instantiate(spiderLeg, transform.position + (transform.forward * 0.5f), Quaternion.identity, null);
+        GameObject leg = Instantiate(spiderLeg, transform.position + (transform.forward * 2f), transform.rotation, null);
         leg.GetComponent<LegController>().Active = false;
     }
 

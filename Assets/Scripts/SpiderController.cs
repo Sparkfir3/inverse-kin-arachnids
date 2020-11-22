@@ -25,6 +25,7 @@ public class SpiderController : MonoBehaviour {
 
     [Header("AI")]
     [SerializeField] private float moveSpeed;
+    [SerializeField] private bool runAI = true;
     private Coroutine move;
 
     [Header("Re-assembly")]
@@ -45,6 +46,8 @@ public class SpiderController : MonoBehaviour {
 
     private void Start() {
         Active = legs.Count >= 2;
+        foreach(GameObject leg in legs)
+            leg.GetComponent<LegController>().Active = true;
     }
 
     private void InitializeLegs() {
@@ -161,6 +164,9 @@ public class SpiderController : MonoBehaviour {
 
     private void Update()
     {
+        if(!Active)
+            return;
+
         bool stepAnyway = true;
 
         //Cycle through the legs, allowing them to take a step if appropriate
@@ -298,7 +304,7 @@ public class SpiderController : MonoBehaviour {
             float slopeLR = (avgLY - avgRY) / (LX - RX);
             float angleLR = Mathf.Rad2Deg * (Mathf.Atan(slopeLR));
 
-            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(-angleFB, 0, angleLR), rotSpeed * Time.deltaTime);
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(-angleFB, transform.rotation.eulerAngles.y, angleLR), rotSpeed * Time.deltaTime);
         }
     }
 
@@ -338,10 +344,11 @@ public class SpiderController : MonoBehaviour {
             }
 
             // Movement
-            //if(_active)
-            //  move = StartCoroutine(Navigate());
-            //else if(move != null)
-            //  StopCoroutine(move);
+            if(runAI)
+                if(_active)
+                    move = StartCoroutine(Navigate());
+                else if(move != null)
+                    StopCoroutine(move);
 
             // Start rebuild try routine
             if(!_active)
@@ -381,7 +388,9 @@ public class SpiderController : MonoBehaviour {
 
             // Move
             agent.destination = target;
-            yield return new WaitForSeconds(3f);
+            while(agent.remainingDistance > 2f)
+                yield return null;
+            yield return new WaitForSeconds(Random.Range(1f, 2.5f));
         }
     }
 
@@ -417,6 +426,12 @@ public class SpiderController : MonoBehaviour {
                 hitLeg.owned = true;
                 legs.Add(hitLeg.gameObject);
             }
+        }
+
+        // 1/10 chance to only have 2 legs
+        if(legs.Count == 4 && Random.Range(0, 9) == 0) {
+            legs.RemoveAt(3);
+            legs.RemoveAt(2);
         }
 
         Debug.Log(gameObject.name + " attempting to rebuild, found " + legs.Count + " legs");
@@ -485,7 +500,7 @@ public class SpiderController : MonoBehaviour {
         yield return null;
     }
 
-    private IEnumerator SetNewLegs(List<GameObject> newLegs) {// Set legs active
+    private IEnumerator SetNewLegs(List<GameObject> newLegs) { // Set legs active
         SetLegBasePositions(newLegs.Count);
         for(int j = 0; j < newLegs.Count; j++) {
             newLegs[j].GetComponent<LegController>().Active = true;
