@@ -388,7 +388,9 @@ public class SpiderController : MonoBehaviour {
 
             // Move
             agent.destination = target;
-            yield return new WaitForSeconds(3f);
+            while(agent.remainingDistance > 2f)
+                yield return null;
+            yield return new WaitForSeconds(Random.Range(1f, 2.5f));
         }
     }
 
