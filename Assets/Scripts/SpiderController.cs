@@ -39,13 +39,20 @@ public class SpiderController : MonoBehaviour {
         boxCollider = GetComponent<BoxCollider>();
         agent = GetComponent<NavMeshAgent>();
 
+        InitializeLegs();
+        reset();
+    }
+
+    private void Start() {
+        Active = legs.Count >= 2;
+    }
+
+    private void InitializeLegs() {
         //Set target caster positions for each leg
-        for (int i = 0; i < legs.Count; i++)
-        {
+        for(int i = 0; i < legs.Count; i++) {
             Transform t = legs[i].GetComponent<LegController>().targetCaster;
 
-            switch (i)
-            {
+            switch(i) {
                 case 0:
                     t.localPosition = new Vector3(t.localPosition.x - casterOffset, t.localPosition.y, t.localPosition.z);
                     break;
@@ -70,12 +77,6 @@ public class SpiderController : MonoBehaviour {
                     break;
             }
         }
-
-        reset();
-    }
-
-    private void Start() {
-        Active = legs.Count >= 2;
     }
 
     public void reset()
@@ -83,9 +84,10 @@ public class SpiderController : MonoBehaviour {
         agent.speed = moveSpeed;
 
         // Set legs, if not already set
-        if (legs.Count == 0)
-            foreach (Transform child in transform)
-                legs.Add(child.gameObject);
+        if(legs.Count == 0) {
+            foreach(LegController leg in GetComponentsInChildren<LegController>())
+                legs.Add(leg.gameObject);
+        }
 
         // Set target casters
         for (int i = 0; i < legs.Count; i++)
@@ -152,6 +154,8 @@ public class SpiderController : MonoBehaviour {
     }
 
     #endregion
+
+    // -------------------------------------------------------------------------------------------------------------
 
     #region Repeating
 
@@ -326,16 +330,22 @@ public class SpiderController : MonoBehaviour {
             if(!_active) {
                 foreach(GameObject leg in legs) {
                     leg.GetComponent<LegController>().Active = false;
+                    leg.GetComponent<LegController>().owned = false;
                     leg.transform.parent = null;
                 }
                 legs.Clear();
+                legTargets.Clear();
             }
 
             // Movement
             //if(_active)
-              //  move = StartCoroutine(Navigate());
+            //  move = StartCoroutine(Navigate());
             //else if(move != null)
-              //  StopCoroutine(move);
+            //  StopCoroutine(move);
+
+            // Start rebuild try routine
+            if(!_active)
+                StartCoroutine(TryRebuild());
         }
     }
 
@@ -375,6 +385,13 @@ public class SpiderController : MonoBehaviour {
         }
     }
 
+    private IEnumerator TryRebuild() {
+        while(!_active) {
+            yield return new WaitForSeconds(5f);
+            AttemptRebuild();
+        }
+    }
+
     #endregion
 
     // -------------------------------------------------------------------------------------------------------------
@@ -396,7 +413,8 @@ public class SpiderController : MonoBehaviour {
         foreach(RaycastHit hit in hits) {
             //Debug.Log(hit.collider.gameObject.name);
             LegController hitLeg = hit.collider.GetComponentInParent<LegController>();
-            if(hitLeg && !legs.Contains(hitLeg.gameObject) && legs.Count < 4) {
+            if(hitLeg && !hitLeg.owned && !legs.Contains(hitLeg.gameObject) && legs.Count < 4) {
+                hitLeg.owned = true;
                 legs.Add(hitLeg.gameObject);
             }
         }
@@ -412,6 +430,7 @@ public class SpiderController : MonoBehaviour {
 
         // Freeze rigidbody
         rb.constraints = RigidbodyConstraints.FreezeAll;
+        boxCollider.enabled = false;
         yield return new WaitForSeconds(1f);
 
         // Move body and legs
@@ -435,7 +454,13 @@ public class SpiderController : MonoBehaviour {
             newLegs[j].GetComponent<LegController>().SetIk(true);
             newLegs[j].transform.parent = transform;
         }
+
+        // Set legs
+        InitializeLegs();
+        reset();
+
         Active = true;
+        boxCollider.enabled = true;
     }
 
     private IEnumerator ResetBody() {
@@ -495,14 +520,14 @@ public class SpiderController : MonoBehaviour {
         baseLegPositions.Clear();
         switch(count) {
             case 2:
-                baseLegPositions.Add(new Vector3(0f, 0.123f, 0.2f));
-                baseLegPositions.Add(new Vector3(0f, 0.123f, 0.2f));
+                baseLegPositions.Add(new Vector3(0f, 0.123f, 0.465f));
+                baseLegPositions.Add(new Vector3(0f, 0.123f, 0.465f));
                 break;
             case 4:
-                baseLegPositions.Add(new Vector3(0f, 0.123f, 0.2f));
-                baseLegPositions.Add(new Vector3(0f, 0.123f, 0.2f));
-                baseLegPositions.Add(new Vector3(0f, 0.123f, 0.09f));
-                baseLegPositions.Add(new Vector3(0f, 0.123f, 0.09f));
+                baseLegPositions.Add(new Vector3(0f, 0.123f, 0.465f));
+                baseLegPositions.Add(new Vector3(0f, 0.123f, 0.465f));
+                baseLegPositions.Add(new Vector3(0f, 0.123f, 0.278f));
+                baseLegPositions.Add(new Vector3(0f, 0.123f, 0.278f));
                 break;
             default:
                 break;

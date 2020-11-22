@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
 
+#pragma warning disable 0649 // Disable "Field is never assigned" warning for SerializeField
+
     [Header("Fireball")]
     [SerializeField] private GameObject fireball;
     [SerializeField] private float fireballSpeed;
@@ -11,7 +13,9 @@ public class PlayerController : MonoBehaviour {
     [Header("Other")]
     [SerializeField] private float cooldown;
     private float cooldownTimer;
-    
+
+    [SerializeField] private GameObject spiderBody, spiderLeg;
+
 
     private void Update() {
         if(cooldownTimer > 0)
@@ -19,15 +23,35 @@ public class PlayerController : MonoBehaviour {
         else
             cooldownTimer = 0;
 
+        // Fireball
         if(Input.GetButtonDown("Fire1") && cooldownTimer == 0) {
             ShootFireball();
             cooldownTimer = cooldown;
+        }
+
+        // Body
+        if(Input.GetButtonDown("Fire2")) {
+            SpawnBody();
+        }
+
+        // Leg
+        if(Input.GetButtonDown("Fire3")) {
+            SpawnLeg();
         }
     }
 
     private void ShootFireball() {
         GameObject fireball = Instantiate(this.fireball, transform.position + (transform.forward * 0.5f), Quaternion.identity, null);
         fireball.GetComponent<Rigidbody>().velocity = transform.forward * fireballSpeed;
+    }
+
+    private void SpawnBody() {
+        Instantiate(spiderBody, transform.position + (transform.forward * 0.5f), Quaternion.identity, null);
+    }
+
+    private void SpawnLeg() {
+        GameObject leg = Instantiate(spiderLeg, transform.position + (transform.forward * 0.5f), Quaternion.identity, null);
+        leg.GetComponent<LegController>().Active = false;
     }
 
 }

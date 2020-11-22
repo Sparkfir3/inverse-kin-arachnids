@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Fireball : MonoBehaviour {
 
+#pragma warning disable 0649 // Disable "Field is never assigned" warning for SerializeField
+
     [SerializeField] private float blastRadius;
 
     private MeshRenderer mesh;
@@ -22,15 +24,15 @@ public class Fireball : MonoBehaviour {
         RaycastHit[] hits = Physics.SphereCastAll(transform.position, blastRadius, transform.forward, 0f, LayerMask.GetMask("Spider", "Legs"));
         foreach(RaycastHit hit in hits) {
             SpiderController hitSpider = hit.collider.GetComponentInParent<SpiderController>();
-            if(hitSpider && !hitSpiders.Contains(hitSpider))
+            if(hitSpider && hitSpider.Active && !hitSpiders.Contains(hitSpider))
                 hitSpiders.Add(hitSpider);
         }
         Debug.Log(gameObject.name + " hit " + hits.Length + " objects, total " + hitSpiders.Count + " spiders");
 
         foreach(SpiderController spider in hitSpiders) {
-            Debug.Log(hitSpiders.Count);
-            spider.Active = false;
-            Debug.Log(hitSpiders.Count); // TODO - fix function ending after setting 1 spider
+            try {
+                spider.Active = false;
+            } catch { }
         }
 
         Destroy(gameObject);

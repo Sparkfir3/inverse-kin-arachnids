@@ -19,6 +19,7 @@ public class LegController : MonoBehaviour {
     public float travelDistance;
     //public Vector3 newFootPos;
 
+    [HideInInspector] public bool owned = false;
     private bool _active;
     private FastIKFabric ik;
     private Rigidbody rb;
@@ -48,7 +49,7 @@ public class LegController : MonoBehaviour {
             rb.isKinematic = _active;
             rb.useGravity = !_active;
             foreach(BoxCollider boxCollider in boxColliders)
-                boxCollider.enabled = true; //!_active;
+                boxCollider.enabled = !_active;
 
             // Disable IK
             if(!_active)
@@ -68,27 +69,25 @@ public class LegController : MonoBehaviour {
     {
         SetTarget(footStopPos);
 
-        // Does the ray intersect any objects excluding the player layer
-        if (Physics.Raycast(targetCaster.transform.position, Vector3.down, out hit, Mathf.Infinity, LayerMask.GetMask("Terrain")))
-        {
-            travelDistance = Vector3.Distance(hit.point, endTarget.transform.position);
-            Debug.DrawRay(targetCaster.transform.position, Vector3.down * hit.distance, Color.magenta);
-            Color32 newColor = new Color32((byte)Mathf.Lerp(0, 255, travelDistance / distThreshold), 0, (byte)Mathf.Lerp(255, 0, travelDistance / distThreshold), 255);
-            Debug.DrawRay(hit.point, transform.TransformDirection(Vector3.left) * travelDistance, newColor);
-            drawRayGizmo = true;
+        if(Active) {
+            // Does the ray intersect any objects excluding the player layer
+            if(Physics.Raycast(targetCaster.transform.position, Vector3.down, out hit, Mathf.Infinity, LayerMask.GetMask("Terrain"))) {
+                travelDistance = Vector3.Distance(hit.point, endTarget.transform.position);
+                Debug.DrawRay(targetCaster.transform.position, transform.TransformDirection(Vector3.down) * hit.distance, Color.magenta);
+                Color32 newColor = new Color32((byte)Mathf.Lerp(0, 255, travelDistance / distThreshold), 0, (byte)Mathf.Lerp(255, 0, travelDistance / distThreshold), 255);
+                Debug.DrawRay(hit.point, transform.TransformDirection(Vector3.left) * travelDistance, newColor);
+                drawRayGizmo = true;
 
-            withinThreshold = (travelDistance <= distThreshold);
+                withinThreshold = (travelDistance <= distThreshold);
 
-            if(!withinThreshold && canStep)
-            {
-                isGrounded = false;
-                StartCoroutine(StepLerp(stepTime));
+                if(!withinThreshold && canStep) {
+                    isGrounded = false;
+                    StartCoroutine(StepLerp(stepTime));
+                }
+            } else {
+                Debug.DrawRay(targetCaster.transform.position, transform.TransformDirection(Vector3.down) * 1000, Color.red);
+                drawRayGizmo = false;
             }
-        }
-        else
-        {
-            Debug.DrawRay(targetCaster.transform.position, Vector3.down * 1000, Color.red);
-            drawRayGizmo = false;
         }
     }
 
