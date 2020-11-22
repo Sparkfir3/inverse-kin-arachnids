@@ -24,6 +24,7 @@ public class SpiderController : MonoBehaviour {
 
     [Header("AI")]
     [SerializeField] private float moveSpeed;
+    [SerializeField] private bool runAI = true;
     private Coroutine move;
 
     [Header("Re-assembly")]
@@ -309,10 +310,11 @@ public class SpiderController : MonoBehaviour {
             }
 
             // Movement
-            //if(_active)
-            //  move = StartCoroutine(Navigate());
-            //else if(move != null)
-            //  StopCoroutine(move);
+            if(runAI)
+                if(_active)
+                    move = StartCoroutine(Navigate());
+                else if(move != null)
+                    StopCoroutine(move);
 
             // Start rebuild try routine
             if(!_active)

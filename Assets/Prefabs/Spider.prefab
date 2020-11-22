@@ -242,6 +242,7 @@ MonoBehaviour:
   - {fileID: 7363881379682704632}
   - {fileID: 2372985736446845148}
   moveSpeed: 5
+  runAI: 1
   rebuildHeightOffset: 0.6
 --- !u!1001 &670728198413565082
 PrefabInstance:
