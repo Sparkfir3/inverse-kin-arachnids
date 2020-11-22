@@ -194,8 +194,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1.1998059, y: 1.0000005, z: 0.8678207}
-  m_Center: {x: 0.015369713, y: 0.40768492, z: -0.0076848506}
+  m_Size: {x: 1.1998059, y: 1.0000005, z: 2.1818225}
+  m_Center: {x: 0.015369713, y: 0.40768492, z: -0.017346501}
 --- !u!195 &9077274455943516323
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -205,7 +205,7 @@ NavMeshAgent:
   m_GameObject: {fileID: 8071011236851675710}
   m_Enabled: 0
   m_AgentTypeID: 0
-  m_Radius: 0.75
+  m_Radius: 1.5
   m_Speed: 3.5
   m_Acceleration: 8
   avoidancePriority: 50
@@ -305,11 +305,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3912439730859529490, guid: 8ffc83b30be492d4985926ecab008baf,
-        type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.5
-      objectReference: {fileID: 0}
     - target: {fileID: 4395539179286663080, guid: 8ffc83b30be492d4985926ecab008baf,
         type: 3}
       propertyPath: m_Name
@@ -404,11 +399,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3912439730859529490, guid: 8ffc83b30be492d4985926ecab008baf,
-        type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4395539179286663080, guid: 8ffc83b30be492d4985926ecab008baf,
         type: 3}
@@ -569,11 +559,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3912439730859529490, guid: 8ffc83b30be492d4985926ecab008baf,
-        type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4395539179286663080, guid: 8ffc83b30be492d4985926ecab008baf,
         type: 3}
@@ -739,11 +724,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3912439730859529490, guid: 8ffc83b30be492d4985926ecab008baf,
-        type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4395539179286663080, guid: 8ffc83b30be492d4985926ecab008baf,
         type: 3}
