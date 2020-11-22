@@ -282,10 +282,16 @@ public class SpiderController : MonoBehaviour {
         }
 
 
-        if(legs.Count == 2)
+        if(legs.Count == 2 && legs[0].GetComponent<LegController>().isGrounded && legs[1].GetComponent<LegController>().isGrounded)
         {
-            //Take the average height of the right and left legs
+            float LX = legs[1].GetComponent<LegController>().footStopPos.x;
+            float RX = legs[0].GetComponent<LegController>().footStopPos.x;
+            float LY = legs[1].GetComponent<LegController>().footStopPos.y;
+            float RY = legs[0].GetComponent<LegController>().footStopPos.y;
+            float slopeLR = (LY - RY) / (LX - RX);
+            float angleLR = Mathf.Rad2Deg * (Mathf.Atan(slopeLR));
 
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, angleLR), rotSpeed * Time.deltaTime);
         }
         if(legs.Count == 4 && legs[0].GetComponent<LegController>().isGrounded && legs[1].GetComponent<LegController>().isGrounded && legs[2].GetComponent<LegController>().isGrounded && legs[3].GetComponent<LegController>().isGrounded)
         {
