@@ -230,6 +230,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6692da1ab33b794284db24db093cb2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rotSpeed: 6
   casterOffset: 1.5
   legTargets:
   - {fileID: 1845686240482967676}

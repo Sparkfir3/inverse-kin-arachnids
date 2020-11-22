@@ -72,7 +72,7 @@ public class LegController : MonoBehaviour {
         if (Physics.Raycast(targetCaster.transform.position, Vector3.down, out hit, Mathf.Infinity, LayerMask.GetMask("Terrain")))
         {
             travelDistance = Vector3.Distance(hit.point, endTarget.transform.position);
-            Debug.DrawRay(targetCaster.transform.position, transform.TransformDirection(Vector3.down) * hit.distance, Color.magenta);
+            Debug.DrawRay(targetCaster.transform.position, Vector3.down * hit.distance, Color.magenta);
             Color32 newColor = new Color32((byte)Mathf.Lerp(0, 255, travelDistance / distThreshold), 0, (byte)Mathf.Lerp(255, 0, travelDistance / distThreshold), 255);
             Debug.DrawRay(hit.point, transform.TransformDirection(Vector3.left) * travelDistance, newColor);
             drawRayGizmo = true;
@@ -87,7 +87,7 @@ public class LegController : MonoBehaviour {
         }
         else
         {
-            Debug.DrawRay(targetCaster.transform.position, transform.TransformDirection(Vector3.down) * 1000, Color.red);
+            Debug.DrawRay(targetCaster.transform.position, Vector3.down * 1000, Color.red);
             drawRayGizmo = false;
         }
     }
