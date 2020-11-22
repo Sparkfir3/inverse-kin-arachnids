@@ -5,6 +5,7 @@ using UnityEngine.AI;
 
 public class SpiderController : MonoBehaviour {
 
+    public float rotSpeed = 10.0f;
     public float casterOffset = 1.0f;
     //public float bodyHeight = 1.0f;
 
@@ -163,6 +164,7 @@ public class SpiderController : MonoBehaviour {
     {
         bool stepAnyway = true;
 
+        //Cycle through the legs, allowing them to take a step if appropriate
         for (int i = 0; i < legs.Count; i++)
         {
             if (legs.Count == 2)
@@ -246,6 +248,7 @@ public class SpiderController : MonoBehaviour {
             }
         }
 
+        //If the legs are lagging behind and need to be forced to step
         if (legs.Count == 2 && stepAnyway)
         {
             //Check which of the front legs is lagging behind the most, then make that leg step forward
@@ -271,6 +274,32 @@ public class SpiderController : MonoBehaviour {
                 legs[1].GetComponent<LegController>().canStep = true;
                 legs[2].GetComponent<LegController>().canStep = true;
             }
+        }
+
+
+        if(legs.Count == 2)
+        {
+            //Take the average height of the right and left legs
+
+        }
+        if(legs.Count == 4 && legs[0].GetComponent<LegController>().isGrounded && legs[1].GetComponent<LegController>().isGrounded && legs[2].GetComponent<LegController>().isGrounded && legs[3].GetComponent<LegController>().isGrounded)
+        {
+            float avgFX = (legs[1].GetComponent<LegController>().footStopPos.x + legs[3].GetComponent<LegController>().footStopPos.x) / 2;
+            float avgBX = (legs[0].GetComponent<LegController>().footStopPos.x + legs[2].GetComponent<LegController>().footStopPos.x) / 2;
+            float avgFY = (legs[1].GetComponent<LegController>().footStopPos.y + legs[3].GetComponent<LegController>().footStopPos.y) / 2;
+            float avgBY = (legs[0].GetComponent<LegController>().footStopPos.y + legs[2].GetComponent<LegController>().footStopPos.y) / 2;
+            float slopeFB = (avgFY - avgBY) / (avgFX - avgBX);
+            float angleFB = Mathf.Rad2Deg * (Mathf.Atan(slopeFB));
+
+
+            float LX = legs[1].GetComponent<LegController>().footStopPos.x;
+            float RX = legs[0].GetComponent<LegController>().footStopPos.x;
+            float avgLY = (legs[1].GetComponent<LegController>().footStopPos.y + legs[3].GetComponent<LegController>().footStopPos.y) / 2;
+            float avgRY = (legs[0].GetComponent<LegController>().footStopPos.y + legs[2].GetComponent<LegController>().footStopPos.y) / 2;
+            float slopeLR = (avgLY - avgRY) / (LX - RX);
+            float angleLR = Mathf.Rad2Deg * (Mathf.Atan(slopeLR));
+
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(-angleFB, 0, angleLR), rotSpeed * Time.deltaTime);
         }
     }
 
